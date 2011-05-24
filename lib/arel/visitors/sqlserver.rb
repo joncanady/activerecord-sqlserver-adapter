@@ -48,9 +48,9 @@ module Arel
               # more complex, maybe the last toekn is the direction?
               if clause_tokens.last =~ /[desc|asc]/i
                 direction = clause_tokens.pop =~ /desc/i ? :desc : :asc
-                Arel::Nodes::Ordering.new Arel.sql(clause_tokens), direction
+                Arel::Nodes::Ordering.new Arel.sql(clause_tokens.join(' ')), direction
               else
-                Arel::Nodes::Ordering.new Arel.sql(caluse_tokens), :asc
+                Arel::Nodes::Ordering.new Arel.sql(caluse_tokens.join(' ')), :asc
               end
             end
           end
