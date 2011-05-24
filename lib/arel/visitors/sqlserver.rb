@@ -29,21 +29,21 @@ module Arel
     alias :order_without_sqlserver :order
     def order(*exprs)
       return order_without_sqlserver(*exprs) unless Arel::Visitors::SQLServer === @visitor
-      @ast.orders.concat(exprs.map{ |x|
-        case x
+      @ast.orders.concat(exprs.map{ |order_by|
+        case order_by
         when Arel::Attributes::Attribute
-          table = Arel::Table.new(x.relation.table_alias || x.relation.name)
-          expr = table[x.name]
+          table = Arel::Table.new(order_by.relation.table_alias || order_by.relation.name)
+          expr = table[order_by.name]
           Arel::Nodes::Ordering.new expr
         when String
-          x.split(',').map do |s|
+          order_by.split(',').map do |s|
             expr, direction = s.split
             expr = Arel.sql(expr)
             direction = direction =~ /desc/i ? :desc : :asc
             Arel::Nodes::Ordering.new expr, direction
           end
         else
-          expr = Arel.sql(x.to_s)
+          expr = Arel.sql(order_by.to_s)
           Arel::Nodes::Ordering.new expr
         end
       }.flatten)
