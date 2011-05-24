@@ -36,11 +36,23 @@ module Arel
           expr = table[order_by.name]
           Arel::Nodes::Ordering.new expr
         when String
-          order_by.split(',').map do |s|
-            expr, direction = s.split
-            expr = Arel.sql(expr)
-            direction = direction =~ /desc/i ? :desc : :asc
-            Arel::Nodes::Ordering.new expr, direction
+          order_by.split(',').map do |clause|
+            clause_tokens = clause.split
+            if clause_tokens.size <= 2 
+              # column_name [DIR]
+              expr, direction = clause_tokens
+              expr = Arel.sql(expr)
+              direction = direction =~ /desc/i ? :desc : :asc
+              Arel::Nodes::Ordering.new expr, direction
+            else
+              # more complex, maybe the last toekn is the direction?
+              if clause_tokens.last =~ /[desc|asc]/i
+                direction = clause_tokens.pop =~ /desc/i ? :desc : :asc
+                Arel::Nodes::Ordering.new Arel.sql(clause_tokens), direction
+              else
+                Arel::Nodes::Ordering.new Arel.sql(caluse_tokens), :asc
+              end
+            end
           end
         else
           expr = Arel.sql(order_by.to_s)
