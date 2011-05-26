@@ -47,7 +47,7 @@ module Arel
               direction = direction =~ /desc/i ? :desc : :asc
               Arel::Nodes::Ordering.new expr, direction
             else
-              # more complex, maybe the last toekn is the direction?
+              # more complex, maybe the last token is the direction?
               if clause_tokens.last =~ /[desc|asc]/i
                 direction = clause_tokens.pop =~ /desc/i ? :desc : :asc
                 Arel::Nodes::Ordering.new Arel.sql(clause_tokens.join(' ')), direction
