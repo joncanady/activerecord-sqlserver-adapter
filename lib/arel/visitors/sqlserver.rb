@@ -31,6 +31,8 @@ module Arel
       return order_without_sqlserver(*exprs) unless Arel::Visitors::SQLServer === @visitor
       @ast.orders.concat(exprs.map{ |order_by|
         case order_by
+        when Arel::Nodes::Ordering
+          order_by
         when Arel::Attributes::Attribute
           table = Arel::Table.new(order_by.relation.table_alias || order_by.relation.name)
           expr = table[order_by.name]
