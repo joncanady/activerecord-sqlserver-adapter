@@ -56,6 +56,13 @@ class SpecificSchemaTestSqlserver < ActiveRecord::TestCase
         assert_equal '12345ABCDE', record.reload.id
       end
 
+      should 'work with identity inserts when the key is an int' do
+        record = SqlServerNaturalPkIntData.new :name => 'Test', :description => 'Natural identity inserts.'
+        record.id = 12
+        assert record.save
+        assert_equal 12, record.reload.id
+      end
+
     end
     
     context 'with special quoted column' do
